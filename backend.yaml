@@ -40,3 +40,9 @@
       src: /tmp/backend.zip   # by default it will checks in ansible server
       dest: /app
       remote_src: yes       # with remote_src: yes -> informing server .zip file already in remote-server
+
+  - name: install npm dependencies
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app       # we are informing to ansible to run the command inside /app path.
+      
