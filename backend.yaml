@@ -11,10 +11,13 @@
   - name: enable nodejs 20
     ansible.builtin.command: dnf module enable nodejs:20 -y
 
-  - name: install nodejs
+  - name: install nodejs and mysql
     ansible.builtin.dnf:      # homogeneous - only works for Redhat family 
-      name: nodejs            # heterogeneous - ansible.builtin.package 
+      name: "{{ item }}"            # heterogeneous - ansible.builtin.package 
       state: installed
+    loop:
+    - nodejs
+    - mysql
 
   - name: create expense user
     ansible.builtin.user:
@@ -64,5 +67,5 @@
       login_user: root
       login_password: "{{ login_password }}"
       target: /app/schema/backend.sql
-      state: dump               ## if state is dump/import we must provide name=all - to dump all data.
+      state: import               ## if state is dump/import we must provide name=all - to dump all data.
       name: all
