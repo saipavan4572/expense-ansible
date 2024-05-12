@@ -2,7 +2,8 @@
   hosts: backend
   become: yes
   vars:
-
+      login_host: db.pspkdevops.online
+      login_password: ExpenseApp@1
   tasks:
   - name: disable default nodejs
     ansible.builtin.command: dnf module disable nodejs -y
@@ -45,4 +46,23 @@
     ansible.builtin.command: npm install
     args:
       chdir: /app       # we are informing to ansible to run the command inside /app path.
-      
+
+  - name: copy backend service
+    ansible.builtin.copy:
+      src: backend.service
+      dest: /etc/systemd/system/backend.service
+
+  - name: install python mysql dependencies
+    ansible.builtin.pip:
+      name: 
+      - PyMySQL
+      - cryptography    # to use the password in the commandline we need to install cryptography as well
+      executable: pip3.9    #since python version installed is 3.9.18 use --> pip3.9
+  - name: import data into MySQL
+    community.mysql.mysql_db:
+      login_host: "{{ login_host }}"
+      login_user: root
+      login_password: "{{ login_password }}"
+      target: /app/schema/backend.sql
+      state: dump               ## if state is dump/import we must provide name=all - to dump all data.
+      name: all
