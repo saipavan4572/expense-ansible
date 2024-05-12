@@ -18,5 +18,11 @@
   - name: create expense user
     ansible.builtin.user:
       name: expense
-  
+
+## if we run the script at this point it will run successfully and run again also it will run without any errors.
+
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory        # state: directory --> then it will create directory, default it will create file
 
