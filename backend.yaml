@@ -69,3 +69,7 @@
       target: /app/schema/backend.sql
       state: import               ## if state is dump/import we must provide name=all - to dump all data.
       name: all
+
+  - name: daemon reload
+    ansible.builtin.systemd_service:
+      daemon_reload: true
