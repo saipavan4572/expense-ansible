@@ -49,3 +49,77 @@
   - name: setup root password
     ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
     when: mysql_connection_output.failed is true ## don't give/use {{ }} braces in when condition
+
+
+### output response message after settingup the root passowrd for the first time.
+### 1st time execution
+# [ ec2-user@ip-172-31-20-95 ~/expense-ansible ]$ ansible-playbook -i inventory -e ansible_user=ec2-user -e ansible_password=DevOps321 db.yaml
+# Please enter MySQL root password: ExpenseApp@1
+
+# PLAY [configure DB server] **************************************************************************************************
+
+# TASK [Gathering Facts] ******************************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [Install MySQL server] *************************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [Start and enable MySql server] ****************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [install python mysql dependencies] ************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [check DB connection] **************************************************************************************************
+# fatal: [db.pspkdevops.online]: FAILED! => {"changed": false, "msg": "unable to connect to database using pymysql 1.1.0, check login_user and login_password are correct or /root/.my.cnf has the credentials. Exception message: (1130, \"ip-172-31-21-219.ec2.internal' is not allowed to connect to this MySQL server\")"}
+# ...ignoring
+
+# TASK [print output] *********************************************************************************************************
+# ok: [db.pspkdevops.online] => {
+#     "msg": "Output: {'failed': True, 'msg': 'unable to connect to database using pymysql 1.1.0, check login_user and login_password are correct or /root/.my.cnf has the credentials. Exception message: (1130, \"ip-172-31-21-219.ec2.internal\\' is not allowed to connect to this MySQL server\")', 'changed': False}"
+# }
+
+# TASK [setup root password] **************************************************************************************************
+# changed: [db.pspkdevops.online]
+
+# PLAY RECAP ******************************************************************************************************************
+# db.pspkdevops.online       : ok=7    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=1
+
+
+####///////////////////////////////////////////////////////////////////////####
+
+
+### output response message after settingup the root passowrd for the 2nd time and later.
+### 2nd time execution - it will skip the task for setup root password
+
+# [ ec2-user@ip-172-31-20-95 ~/expense-ansible ]$ ansible-playbook -i inventory -e ansible_user=ec2-user -e ansible_password=DevOps321 db.yaml
+# Please enter MySQL root password: ExpenseApp@1
+
+# PLAY [configure DB server] **************************************************************************************************
+
+# TASK [Gathering Facts] ******************************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [Install MySQL server] *************************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [Start and enable MySql server] ****************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [install python mysql dependencies] ************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [check DB connection] **************************************************************************************************
+# ok: [db.pspkdevops.online]
+
+# TASK [print output] *********************************************************************************************************
+# ok: [db.pspkdevops.online] => {
+#     "msg": "Output: {'changed': False, 'connector_name': 'pymysql', 'connector_version': '1.1.0', 'version': {'major': 8, 'minor': 0, 'release': 36, 'suffix': '', 'full': '8.0.36'},
+#.......... lot of info printed in the console.. so ignoring all the printed data.
+# Do_DB': '', 'Binlog_Ignore_DB': '', 'Executed_Gtid_Set': ''}, 'slave_hosts': {}, 'slave_status': {}, 'failed': False}"
+# }
+# TASK [setup root password] **************************************************************************************************
+# skipping: [db.pspkdevops.online]
+
+# PLAY RECAP ******************************************************************************************************************
+# db.pspkdevops.online       : ok=6    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
