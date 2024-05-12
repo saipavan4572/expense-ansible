@@ -15,6 +15,13 @@
       state: started
       enabled: yes
   
+  - name: install python mysql dependencies
+    ansible.builtin.pip:
+      name: 
+      - PyMySQL
+      - cryptography    # to use the password in the commandline we need to install cryptography as well
+      executable: pip3.9    #since python version installed is 3.9.18 use --> pip3.9
+
   # to check password is setup or not
   - name: check DB connection
     community.mysql.mysql_info:
@@ -27,3 +34,10 @@
   - name: print output
     ansible.builtin.debug:
       msg: "Output: {{ mysql_connection_output }}"
+
+## when we run/execute we will get the below error message:
+# TASK [check DB connection] **************************************************************************************************
+# fatal: [db.pspkdevops.online]: FAILED! => {"changed": false, "msg": "A MySQL module is required: for Python 2.7 either PyMySQL, or MySQL-python, or for Python 3.X mysqlclient or PyMySQL. Consider setting ansible_python_interpreter to use the intended Python version."}
+# ...ignoring
+
+# this error comes because we didn't install the pythod dependencies for the mysql, so we need to install dependencies
