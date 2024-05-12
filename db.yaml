@@ -3,6 +3,10 @@
   become: yes
   vars:
     login_host: db.pspkdevops.online
+  vars_prompt:
+  - name: mysql_root_password
+    prompt: Please enter MySQL root password
+    private: no
   tasks: 
   - name: Install MySQL server
     ansible.builtin.dnf:
@@ -27,7 +31,7 @@
     community.mysql.mysql_info:
       login_host: "{{ login_host }}"
       login_user: root
-      login_password: ExpenseApp@1
+      login_password: "{{ mysql_root_password }}"
     ignore_errors: yes      # ignoring the errors when we run it for the first time because password is not setup
     register: mysql_connection_output   # to get the result of the command/task executed into variable
   
@@ -41,3 +45,7 @@
 # ...ignoring
 
 # this error comes because we didn't install the pythod dependencies for the mysql, so we need to install dependencies
+
+  - name: setup root password
+    ansible.builtin.command: "mysql_secure_installation --set-root-pass {{ mysql_root_password }}"
+    when: mysql_connection_output.failed is true ## don't give/use {{ }} braces in when condition
